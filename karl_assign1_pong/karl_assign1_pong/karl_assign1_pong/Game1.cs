@@ -77,15 +77,15 @@ namespace karl_assign1_pong
             float buffer = 18;
 
             Vector2 paddlePosition1 = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + buffer, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-            paddle1.Initialize(Content.Load<Texture2D>("paddle"), paddlePosition1, false);
+            paddle1.Initialize(Content.Load<Texture2D>("paddle"), paddlePosition1);
 
             Vector2 paddlePosition2 = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width - buffer,
                                                     GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-            paddle2.Initialize(Content.Load<Texture2D>("paddle"), paddlePosition2, false);
+            paddle2.Initialize(Content.Load<Texture2D>("paddle"), paddlePosition2);
 
             // Load the ball
             Vector2 ballPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-            Vector2 ballDirection = new Vector2(1.0f, 0.0f);
+            Vector2 ballDirection = new Vector2(1.0f, 1.00f);
             ball.Initialize(Content.Load<Texture2D>("ball"), ballPosition, ballDirection);
 
             // load midline
@@ -132,7 +132,7 @@ namespace karl_assign1_pong
             base.Update(gameTime);
         }
 
-        private void UpdateCollision()
+        private Boolean UpdateCollision()
         {
             Rectangle ballBox;
             Rectangle paddle1Box;
@@ -144,13 +144,16 @@ namespace karl_assign1_pong
 
             if (ballBox.Intersects(paddle1Box))
             {
-                ball.Collide(true);
+                ball.Collide(true, currentGamePadState1.ThumbSticks.Left.Y);
+                return true;
             }
 
             if (ballBox.Intersects(paddle2Box))
             {
-                ball.Collide(false);
-            }            
+                ball.Collide(false, currentGamePadState2.ThumbSticks.Left.Y);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

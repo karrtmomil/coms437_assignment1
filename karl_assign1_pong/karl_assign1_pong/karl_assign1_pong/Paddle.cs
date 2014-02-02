@@ -14,9 +14,7 @@ namespace karl_assign1_pong
         public Vector2 Position;
 
         // constant Paddle move speed
-        public float paddleMoveSpeed = 8.0f;
-
-        public Boolean OneGamepad;
+        public float paddleMoveSpeed = 10.0f;
 
         // Get the width of the paddle
         public int Width
@@ -30,34 +28,17 @@ namespace karl_assign1_pong
             get { return PaddleTexture.Height; }
         }
 
-        public void Initialize(Texture2D texture, Vector2 position, Boolean oneGamepad)
+        public void Initialize(Texture2D texture, Vector2 position)
         {
             PaddleTexture = texture;
 
             Position = new Vector2(position.X - this.Width / 2, position.Y - this.Height / 2);
-
-            OneGamepad = oneGamepad;
         }
 
         public void Update(GameTime gameTime, GamePadState currentGamePadState)
         {
-            if (!OneGamepad)
-            {
-                this.Position.Y -= currentGamePadState.ThumbSticks.Left.Y * paddleMoveSpeed;
-
-                if (currentGamePadState.DPad.Up == ButtonState.Pressed)
-                {
-                    Position.Y -= paddleMoveSpeed;
-                }
-                if (currentGamePadState.DPad.Down == ButtonState.Pressed)
-                {
-                    Position.Y += paddleMoveSpeed;
-                }
-            }
-            else
-            {
-                Position.Y -= currentGamePadState.ThumbSticks.Right.Y * paddleMoveSpeed;
-            }
+            
+            this.Position.Y -= currentGamePadState.ThumbSticks.Left.Y * paddleMoveSpeed;
         }
 
         public void Draw(SpriteBatch spriteBatch)
