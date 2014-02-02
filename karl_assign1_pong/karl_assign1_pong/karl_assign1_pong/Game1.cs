@@ -73,6 +73,11 @@ namespace karl_assign1_pong
 
             // TODO: use this.Content to load your game content here
 
+            //graphics.PreferredBackBufferWidth = 800;
+            //graphics.PreferredBackBufferHeight = 600;
+            //graphics.IsFullScreen = true;
+            graphics.ApplyChanges();
+
             // Load the paddles
             float buffer = 18;
 
