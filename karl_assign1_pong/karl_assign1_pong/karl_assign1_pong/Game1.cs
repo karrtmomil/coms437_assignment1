@@ -19,6 +19,23 @@ namespace karl_assign1_pong
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        Paddle paddle1;
+        Paddle paddle2;
+        Ball ball;
+
+        Texture2D midLine;
+
+        // Keyboard states used to determine key presses
+        //KeyboardState currentKeyboardState;
+        //KeyboardState previousKeyboardState;
+
+        // Gamepad states used to determine button presses
+        GamePadState currentGamePadState1;
+        GamePadState previousGamePadState1;
+        GamePadState currentGamePadState2;
+        GamePadState previousGamePadState2;
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -35,6 +52,13 @@ namespace karl_assign1_pong
         {
             // TODO: Add your initialization logic here
 
+            // Initialize paddles
+            paddle1 = new Paddle();
+            paddle2 = new Paddle();
+
+            // Initialize ball
+            ball = new Ball();
+
             base.Initialize();
         }
 
@@ -48,6 +72,24 @@ namespace karl_assign1_pong
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+
+            // Load the paddles
+            float buffer = 18;
+
+            Vector2 paddlePosition1 = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + buffer, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            paddle1.Initialize(Content.Load<Texture2D>("paddle"), paddlePosition1, false);
+
+            Vector2 paddlePosition2 = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width - buffer,
+                                                    GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            paddle2.Initialize(Content.Load<Texture2D>("paddle"), paddlePosition2, false);
+
+            // Load the ball
+            Vector2 ballPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            Vector2 ballDirection = new Vector2(1.0f, 0.0f);
+            ball.Initialize(Content.Load<Texture2D>("ball"), ballPosition, ballDirection);
+
+            // load midline
+            midLine = Content.Load<Texture2D>("midLine");
         }
 
         /// <summary>
@@ -71,8 +113,44 @@ namespace karl_assign1_pong
                 this.Exit();
 
             // TODO: Add your update logic here
+            previousGamePadState1 = currentGamePadState1;
+            previousGamePadState2 = currentGamePadState2;
+
+            currentGamePadState1 = GamePad.GetState(PlayerIndex.One);
+            currentGamePadState2 = GamePad.GetState(PlayerIndex.One);
+
+            paddle1.Update(gameTime, currentGamePadState1);
+            paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
+            paddle2.Update(gameTime, currentGamePadState2);
+            paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
+
+            ball.Update(gameTime, GraphicsDevice.Viewport.Height);
+
+            UpdateCollision();
+
 
             base.Update(gameTime);
+        }
+
+        private void UpdateCollision()
+        {
+            Rectangle ballBox;
+            Rectangle paddle1Box;
+            Rectangle paddle2Box;
+
+            ballBox = new Rectangle((int)ball.Position.X,(int)ball.Position.Y,ball.Width,ball.Height);
+            paddle1Box = new Rectangle((int)paddle1.Position.X + paddle1.Width * 3 / 4, (int)paddle1.Position.Y, paddle1.Width / 4, paddle1.Height);
+            paddle2Box = new Rectangle((int)paddle2.Position.X, (int)paddle2.Position.Y, paddle2.Width / 4, paddle2.Height);
+
+            if (ballBox.Intersects(paddle1Box))
+            {
+                ball.Collide(true);
+            }
+
+            if (ballBox.Intersects(paddle2Box))
+            {
+                ball.Collide(false);
+            }            
         }
 
         /// <summary>
@@ -81,9 +159,25 @@ namespace karl_assign1_pong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.OrangeRed);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
+
+            spriteBatch.Begin();
+
+            paddle1.Draw(spriteBatch);
+            paddle2.Draw(spriteBatch);
+            ball.Draw(spriteBatch);
+
+            Vector2 midLinePos = new Vector2(0,-36);
+
+            while (midLinePos.Y < GraphicsDevice.Viewport.Width)
+            {
+
+                midLinePos = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - Content.Load<Texture2D>("midLine").Width / 2, midLinePos.Y + 48);
+                spriteBatch.Draw(midLine, midLinePos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            }
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
