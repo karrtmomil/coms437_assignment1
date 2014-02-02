@@ -50,8 +50,6 @@ namespace karl_assign1_pong
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             // Initialize paddles
             paddle1 = new Paddle();
             paddle2 = new Paddle();
@@ -70,8 +68,6 @@ namespace karl_assign1_pong
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
 
             //graphics.PreferredBackBufferWidth = 800;
             //graphics.PreferredBackBufferHeight = 600;
@@ -117,7 +113,6 @@ namespace karl_assign1_pong
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
             previousGamePadState1 = currentGamePadState1;
             previousGamePadState2 = currentGamePadState2;
 
@@ -168,8 +163,6 @@ namespace karl_assign1_pong
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-
-            // TODO: Add your drawing code here
 
             spriteBatch.Begin();
 
