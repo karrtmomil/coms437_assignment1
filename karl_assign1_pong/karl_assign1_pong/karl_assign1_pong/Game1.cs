@@ -118,10 +118,10 @@ namespace karl_assign1_pong
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //graphics.PreferredBackBufferWidth = 800;
-            //graphics.PreferredBackBufferHeight = 600;
+            //graphics.PreferredBackBufferWidth = 400;
+            //graphics.PreferredBackBufferHeight = 220;
             //graphics.IsFullScreen = true;
-            //graphics.ApplyChanges();
+            graphics.ApplyChanges();
 
             // Load the paddles
             float buffer = 18;
@@ -433,8 +433,11 @@ namespace karl_assign1_pong
 
         private void DrawGame()
         {
-            spriteBatch.DrawString(Font2, score1.ToString(), new Vector2(320, 0), Color.White);
-            spriteBatch.DrawString(Font2, score2.ToString(), new Vector2(450, 0), Color.White);
+            Vector2 origin1 = Font2.MeasureString(score1.ToString()) / 2;
+            Vector2 origin2 = Font2.MeasureString(score2.ToString()) / 2;
+
+            spriteBatch.DrawString(Font2, score1.ToString(), new Vector2(GraphicsDevice.Viewport.Width * 7 / 16, GraphicsDevice.Viewport.Height / 10), Color.White, 0f, origin1, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.DrawString(Font2, score2.ToString(), new Vector2(GraphicsDevice.Viewport.Width * 9 / 16, GraphicsDevice.Viewport.Height / 10), Color.White, 0f, origin1, 1f, SpriteEffects.None, 0.5f);
 
             paddle1.Draw(spriteBatch);
             paddle2.Draw(spriteBatch);
