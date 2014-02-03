@@ -35,10 +35,10 @@ namespace karl_assign1_pong
             Position = new Vector2(position.X - this.Width / 2, position.Y - this.Height / 2);
         }
 
-        public void Update(GameTime gameTime, GamePadState currentGamePadState)
+        public void Update(GameTime gameTime, float leftStickY)
         {
             
-            this.Position.Y -= currentGamePadState.ThumbSticks.Left.Y * paddleMoveSpeed;
+            this.Position.Y -= leftStickY * paddleMoveSpeed;
         }
 
         public void Draw(SpriteBatch spriteBatch)

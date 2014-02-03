@@ -218,9 +218,9 @@ namespace karl_assign1_pong
                     currentGamePadState1 = GamePad.GetState(PlayerIndex.One);
                     currentGamePadState2 = GamePad.GetState(PlayerIndex.One);
 
-                    paddle1.Update(gameTime, currentGamePadState1);
+                    paddle1.Update(gameTime, currentGamePadState1.ThumbSticks.Left.Y);
                     paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
-                    paddle2.Update(gameTime, currentGamePadState2);
+                    paddle2.Update(gameTime, currentGamePadState2.ThumbSticks.Left.Y);
                     paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
 
                     ball.Update(gameTime, GraphicsDevice.Viewport.Height);
@@ -235,9 +235,9 @@ namespace karl_assign1_pong
                    currentGamePadState1 = GamePad.GetState(PlayerIndex.One);
                    currentGamePadState2 = GamePad.GetState(PlayerIndex.Two);
 
-                   paddle1.Update(gameTime, currentGamePadState1);
+                   paddle1.Update(gameTime, currentGamePadState1.ThumbSticks.Left.Y);
                    paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
-                   paddle2.Update(gameTime, currentGamePadState2);
+                   paddle2.Update(gameTime, currentGamePadState2.ThumbSticks.Left.Y);
                    paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
 
                    ball.Update(gameTime, GraphicsDevice.Viewport.Height);
