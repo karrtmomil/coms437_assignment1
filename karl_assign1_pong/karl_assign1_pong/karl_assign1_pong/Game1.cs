@@ -24,6 +24,30 @@ namespace karl_assign1_pong
         Ball ball;
 
         Texture2D midLine;
+        SpriteFont Font1;
+        SpriteFont Font2;
+
+        Color[] menuColor = {Color.White, Color.White, Color.White};
+
+        enum MenuState
+        {
+            SinglePlayer,
+            Multiplayer,
+            Exit,
+        }
+
+        MenuState menuSelect = MenuState.SinglePlayer;
+
+        int menuDelay = 0;
+
+        enum GameState
+        {
+            MainMenu,
+            SinglePlayer,
+            Multiplayer,
+        }
+
+        GameState currentGamesState = GameState.MainMenu;
 
         // Keyboard states used to determine key presses
         //KeyboardState currentKeyboardState;
@@ -91,6 +115,9 @@ namespace karl_assign1_pong
 
             // load midline
             midLine = Content.Load<Texture2D>("midLine");
+
+            Font1 = Content.Load<SpriteFont>("Test");
+            Font2 = Content.Load<SpriteFont>("SpriteFont2");
         }
 
         /// <summary>
@@ -109,25 +136,115 @@ namespace karl_assign1_pong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            
 
-            previousGamePadState1 = currentGamePadState1;
-            previousGamePadState2 = currentGamePadState2;
+            switch (currentGamesState)
+            {
 
-            currentGamePadState1 = GamePad.GetState(PlayerIndex.One);
-            currentGamePadState2 = GamePad.GetState(PlayerIndex.One);
+                case GameState.MainMenu:
+                    // Allows the game to exit
+                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+                        this.Exit();
+                    MenuState NewMenuSelect = menuSelect;
 
-            paddle1.Update(gameTime, currentGamePadState1);
-            paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
-            paddle2.Update(gameTime, currentGamePadState2);
-            paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
+                    switch (menuSelect)
+                    {
+                        case MenuState.SinglePlayer:
+                            menuColor[0] = Color.Red;
+                            menuColor[1] = Color.White;
+                            menuColor[2] = Color.White;
 
-            ball.Update(gameTime, GraphicsDevice.Viewport.Height);
+                            if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.Y < -0.9)
+                            {
+                                NewMenuSelect = MenuState.Multiplayer;                       
+                            }
+                            else if (GamePad.GetState(PlayerIndex.One).Buttons.A == ButtonState.Pressed)
+                            {
+                                currentGamesState = GameState.SinglePlayer;
+                            }
 
-            UpdateCollision();
+                        break;
+                        
+                        case MenuState.Multiplayer:
+                            menuColor[0] = Color.White;
+                            menuColor[1] = Color.Red;
+                            menuColor[2] = Color.White;
 
+                            if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.Y > 0.9)
+                            {
+                                NewMenuSelect = MenuState.SinglePlayer;
+                            }
+                            else if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.Y < -0.9)
+                            {
+                                NewMenuSelect = MenuState.Exit;
+                            }
+                            else if (GamePad.GetState(PlayerIndex.One).Buttons.A == ButtonState.Pressed)
+                            {
+                                currentGamesState = GameState.Multiplayer;
+                            }
+                        break;
+
+                        case MenuState.Exit:
+                            menuColor[0] = Color.White;
+                            menuColor[1] = Color.White;
+                            menuColor[2] = Color.Red;
+
+                            if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.Y > 0.9)
+                            {
+                                NewMenuSelect = MenuState.Multiplayer;
+                            }
+                            else if (GamePad.GetState(PlayerIndex.One).Buttons.A == ButtonState.Pressed)
+                            {
+                                this.Exit();
+                            }
+                        break;
+                    }
+
+                    if (gameTime.ElapsedGameTime.Milliseconds > menuDelay)
+                    {
+                        menuSelect = NewMenuSelect;
+                        menuDelay = 100;
+                    }
+                    else
+                    {
+                        menuDelay -= gameTime.ElapsedGameTime.Milliseconds;
+                    }
+                break;
+
+                case GameState.SinglePlayer:
+                    previousGamePadState1 = currentGamePadState1;
+                    previousGamePadState2 = currentGamePadState2;
+
+                    currentGamePadState1 = GamePad.GetState(PlayerIndex.One);
+                    currentGamePadState2 = GamePad.GetState(PlayerIndex.One);
+
+                    paddle1.Update(gameTime, currentGamePadState1);
+                    paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
+                    paddle2.Update(gameTime, currentGamePadState2);
+                    paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
+
+                    ball.Update(gameTime, GraphicsDevice.Viewport.Height);
+
+                    UpdateCollision();
+               break;
+
+               case GameState.Multiplayer:
+                   previousGamePadState1 = currentGamePadState1;
+                   previousGamePadState2 = currentGamePadState2;
+
+                   currentGamePadState1 = GamePad.GetState(PlayerIndex.One);
+                   currentGamePadState2 = GamePad.GetState(PlayerIndex.Two);
+
+                   paddle1.Update(gameTime, currentGamePadState1);
+                   paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
+                   paddle2.Update(gameTime, currentGamePadState2);
+                   paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
+
+                   ball.Update(gameTime, GraphicsDevice.Viewport.Height);
+
+                   UpdateCollision();
+               break;
+            }
 
             base.Update(gameTime);
         }
@@ -165,18 +282,31 @@ namespace karl_assign1_pong
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
-
-            paddle1.Draw(spriteBatch);
-            paddle2.Draw(spriteBatch);
-            ball.Draw(spriteBatch);
-
-            Vector2 midLinePos = new Vector2(0,-36);
-
-            while (midLinePos.Y < GraphicsDevice.Viewport.Width)
+            switch (currentGamesState)
             {
+                case GameState.MainMenu:
+                    spriteBatch.DrawString(Font2, "Spin", new Vector2(320,100),Color.White, 0f, new Vector2(0,0), 1f, SpriteEffects.None, 0.5f);
+                    spriteBatch.DrawString(Font1, "Singleplayer", new Vector2(320, 160), menuColor[0]);
+                    spriteBatch.DrawString(Font1, "Multiplayer", new Vector2(320, 180), menuColor[1]);
+                    spriteBatch.DrawString(Font1, "Exit", new Vector2(320, 200), menuColor[2]);
+                    break;
 
-                midLinePos = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - Content.Load<Texture2D>("midLine").Width / 2, midLinePos.Y + 48);
-                spriteBatch.Draw(midLine, midLinePos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                case GameState.Multiplayer:
+                case GameState.SinglePlayer:
+
+                    paddle1.Draw(spriteBatch);
+                    paddle2.Draw(spriteBatch);
+                    ball.Draw(spriteBatch);
+
+                    Vector2 midLinePos = new Vector2(0, -36);
+
+                    while (midLinePos.Y < GraphicsDevice.Viewport.Width)
+                    {
+
+                        midLinePos = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - Content.Load<Texture2D>("midLine").Width / 2, midLinePos.Y + 48);
+                        spriteBatch.Draw(midLine, midLinePos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    }
+                    break;
             }
             spriteBatch.End();
 
