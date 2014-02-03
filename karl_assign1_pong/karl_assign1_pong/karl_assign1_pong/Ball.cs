@@ -24,6 +24,8 @@ namespace karl_assign1_pong
 
         private const float SpinFactor = 0.01f;
 
+        private int Delay;
+
         // Get the width of the ball
         public int Width
         {
@@ -36,7 +38,7 @@ namespace karl_assign1_pong
             get { return BallTexture.Height; }
         }
 
-        public void Initialize(Texture2D texture, Vector2 position, Vector2 direction)
+        public void Initialize(Texture2D texture, Vector2 position, Vector2 direction, int delay)
         {
             BallTexture = texture;
 
@@ -45,34 +47,50 @@ namespace karl_assign1_pong
             CurrentSpeed = StartSpeed;
 
             Direction = direction;
+
+            Delay = delay;
+
+            Spin = 0;
         }
 
-        public void Reset(Vector2 position, Vector2 direction)
+        public void Reset(Vector2 position, Vector2 direction, int delay)
         {
             Position = new Vector2(position.X - this.Width / 2, position.Y - this.Height / 2);
 
             CurrentSpeed = StartSpeed;
 
             Direction = direction;
+
+            Delay = delay;
+
+            Spin = 0;
         }
 
         public void Update(GameTime gameTime, float maxHeight)
         {
-            Direction.Y -= Spin * SpinFactor;
-            Direction.Normalize();
-            Position.Y -= CurrentSpeed* Direction.Y;
-            Position.X += CurrentSpeed * Direction.X;
-
-            if (Position.Y < 0 && Direction.Y > 0)
+            if (Delay < 0)
             {
-                Direction.Y = -Direction.Y * 0.9f;
-                Spin = Spin / 2;
+                float timestep = gameTime.ElapsedGameTime.Milliseconds / 16;
+                Direction.Y -= Spin * SpinFactor;
+                Direction.Normalize();
+                Position.Y -= CurrentSpeed * timestep * Direction.Y;
+                Position.X += CurrentSpeed * timestep * Direction.X;
+
+                if (Position.Y < 0 && Direction.Y > 0)
+                {
+                    Direction.Y = -Direction.Y * (float)Math.Pow(0.8f, timestep);
+                    Spin = Spin / (2 * timestep);
+                }
+
+                if (Position.Y > maxHeight - Height && Direction.Y < 0)
+                {
+                    Direction.Y = -Direction.Y * (float)Math.Pow(0.8f, timestep) ;
+                    Spin = Spin / (2 * timestep);
+                }
             }
-
-            if (Position.Y > maxHeight - Height && Direction.Y < 0)
+            else
             {
-                Direction.Y = -Direction.Y * 0.8f;
-                Spin = Spin / 2;
+                Delay -= gameTime.ElapsedGameTime.Milliseconds;
             }
         }
 
@@ -94,7 +112,7 @@ namespace karl_assign1_pong
                     Direction.X = -Direction.X;
                 }
             }
-            CurrentSpeed += 0.15f;
+            CurrentSpeed += 0.20f;
             CurrentSpeed = MathHelper.Clamp(CurrentSpeed, 0, MaxSpeed);
             
         }
