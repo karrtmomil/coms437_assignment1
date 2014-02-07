@@ -6,7 +6,7 @@ namespace karl_assign1_pong
 {
     class Ball
     {
-        // Animation representing the ball
+        // Texture representing the ball
         public Texture2D BallTexture;
 
         // Postion
@@ -16,7 +16,7 @@ namespace karl_assign1_pong
 
         public float CurrentSpeed;
 
-        private const float MaxSpeed = 12.0f;
+        private const float MaxSpeed = 15.0f;
 
         public Vector2 Direction;
 
@@ -64,6 +64,13 @@ namespace karl_assign1_pong
             Delay = delay;
 
             Spin = 0;
+        }
+
+        public void Boost(Vector2 direction, float speed)
+        {
+            Direction = direction;
+            CurrentSpeed += speed;
+            CurrentSpeed = MathHelper.Clamp(CurrentSpeed, 0, MaxSpeed);
         }
 
         public void Update(GameTime gameTime, float maxHeight)

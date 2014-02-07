@@ -352,35 +352,46 @@ namespace karl_assign1_pong
 
             ball.Update(gameTime, GraphicsDevice.Viewport.Height);
 
-            speedPower.Update(gameTime, Rand);
-            strobePower.Update(gameTime, Rand);
-
             UpdateCollision();
             CheckForScore();
+
+            speedPower.Update(gameTime, Rand);
+            strobePower.Update(gameTime, Rand);
         }
 
-        private Boolean UpdateCollision()
+        private void UpdateCollision()
         {
             Rectangle ballBox;
             Rectangle paddle1Box;
             Rectangle paddle2Box;
+            Rectangle speedBox;
+            Rectangle strobeBox;
 
             ballBox = new Rectangle((int)ball.Position.X,(int)ball.Position.Y,ball.Width,ball.Height);
             paddle1Box = new Rectangle((int)paddle1.Position.X + paddle1.Width * 3 / 4, (int)paddle1.Position.Y, paddle1.Width / 4, paddle1.Height);
             paddle2Box = new Rectangle((int)paddle2.Position.X, (int)paddle2.Position.Y, paddle2.Width / 4, paddle2.Height);
+            speedBox = new Rectangle((int)speedPower.Position.X, (int)speedPower.Position.Y, speedPower.Width, speedPower.Height);
+            strobeBox = new Rectangle((int)strobePower.Position.X, (int)strobePower.Position.Y, strobePower.Width, strobePower.Height);
 
             if (ballBox.Intersects(paddle1Box))
             {
                 ball.Collide(true, currentGamePadState1.ThumbSticks.Left.Y);
-                return true;
             }
 
             if (ballBox.Intersects(paddle2Box))
             {
                 ball.Collide(false, currentGamePadState2.ThumbSticks.Left.Y);
-                return true;
             }
-            return false;
+
+            if (ballBox.Intersects(speedBox))
+            {
+                speedPower.Collide(ball, Rand);
+            }
+
+            if (ballBox.Intersects(strobeBox))
+            {
+                strobePower.Collide(ball);
+            }
         }
 
         private void CheckForScore()

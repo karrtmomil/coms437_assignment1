@@ -70,5 +70,10 @@ namespace karl_assign1_pong
             Timer += TimerMax;
             Position = new Vector2((float)rand.NextDouble() * Spawn.Width + Spawn.Left, (float)rand.NextDouble() * Spawn.Height + Spawn.Top);
         }
+
+        public void Collide(Ball ball)
+        {
+
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace karl_assign1_pong
 {
     class Paddle
     {
-        // Animation representing the paddle
+        // Texture representing the paddle
         public Texture2D PaddleTexture;
 
         // Postion
