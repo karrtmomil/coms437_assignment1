@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace karl_assign1_pong
 {
@@ -76,6 +77,8 @@ namespace karl_assign1_pong
             Spin = 0;
 
             Strobe = false;
+
+            Visible = true;
         }
 
         public void Boost(Vector2 direction, float speed)
@@ -92,7 +95,7 @@ namespace karl_assign1_pong
             Visible = false;
         }
 
-        public void Update(GameTime gameTime, float maxHeight)
+        public void Update(GameTime gameTime, float maxHeight, SoundEffect wallSound)
         {
             if (Delay < 0)
             {
@@ -106,12 +109,14 @@ namespace karl_assign1_pong
                 {
                     Direction.Y = -Direction.Y * (float)Math.Pow(0.8f, timestep);
                     Spin = Spin / (2 * timestep);
+                    wallSound.Play();
                 }
 
                 if (Position.Y > maxHeight - Height && Direction.Y < 0)
                 {
                     Direction.Y = -Direction.Y * (float)Math.Pow(0.8f, timestep) ;
                     Spin = Spin / (2 * timestep);
+                    wallSound.Play();
                 }
                 if (Strobe)
                 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace karl_assign1_pong
 {
@@ -8,6 +9,8 @@ namespace karl_assign1_pong
     {
         // Texture representing the Speed PowerUp
         public Texture2D SpeedTexture;
+
+        public SoundEffect SpeedSound;
 
         public bool Active;
 
@@ -35,9 +38,10 @@ namespace karl_assign1_pong
             get { return SpeedTexture.Height; }
         }
 
-        public void Initialize(Texture2D texture, Rectangle spawn)
+        public void Initialize(Texture2D texture,SoundEffect sound, Rectangle spawn)
         {
             SpeedTexture = texture;
+            SpeedSound = sound;
             Active = false;
             Timer = TimerDown;
             Spawn = spawn;
@@ -99,6 +103,7 @@ namespace karl_assign1_pong
                 ball.Boost(ballDirection, boostSpeed);
                 Active = false;
                 Timer += TimerDown;
+                SpeedSound.Play();
             }
         }
     }

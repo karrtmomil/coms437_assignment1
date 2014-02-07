@@ -39,8 +39,6 @@ namespace karl_assign1_pong
         SoundEffect paddleSound;
         SoundEffect wallSound;
         SoundEffect scoreSound;
-        SoundEffect speedPowerSound;
-        SoundEffect strobePowerSound;
 
         enum MenuState
         {
@@ -170,13 +168,15 @@ namespace karl_assign1_pong
                 GraphicsDevice.Viewport.Y + (int)buffer,
                 GraphicsDevice.Viewport.Width - (int)buffer * 4 - paddle1.Width * 2 - Content.Load<Texture2D>("speed").Width,
                 GraphicsDevice.Viewport.Height - (int)buffer * 2 - Content.Load<Texture2D>("speed").Height);
-            speedPower.Initialize(Content.Load<Texture2D>("speed3"), spawnArea);
-            strobePower.Initialize(Content.Load<Texture2D>("strobe2"), spawnArea);
+            speedPower.Initialize(Content.Load<Texture2D>("speed3"), Content.Load<SoundEffect>("sound/powerSpeed"), spawnArea);
+            strobePower.Initialize(Content.Load<Texture2D>("strobe2"), Content.Load<SoundEffect>("sound/power1"), spawnArea);
 
             Font1 = Content.Load<SpriteFont>("Font1");
             Font2 = Content.Load<SpriteFont>("Font2");
 
             paddleSound = Content.Load<SoundEffect>("sound/paddle");
+            wallSound = Content.Load<SoundEffect>("sound/wall");
+            scoreSound = Content.Load<SoundEffect>("sound/score");
         }
 
         /// <summary>
@@ -361,7 +361,7 @@ namespace karl_assign1_pong
             paddle1.Update(gameTime, currentGamePadState1.ThumbSticks.Left.Y);
             paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
 
-            ball.Update(gameTime, GraphicsDevice.Viewport.Height);
+            ball.Update(gameTime, GraphicsDevice.Viewport.Height, wallSound);
 
             UpdateCollision();
             CheckForScore();
@@ -417,6 +417,7 @@ namespace karl_assign1_pong
 
             if (!ballBox.Intersects(screenBox))
             {
+                scoreSound.Play();
                 float direction = Rand.Next(2) * 2 - 1;
                 Vector2 ballPosition = new Vector2(GraphicsDevice.Viewport.X + GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Y + GraphicsDevice.Viewport.Height / 2);
                 if (ball.Position.X < 0)
