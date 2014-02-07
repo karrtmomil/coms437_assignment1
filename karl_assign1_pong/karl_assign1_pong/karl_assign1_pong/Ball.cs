@@ -12,6 +12,8 @@ namespace karl_assign1_pong
         // Postion
         public Vector2 Position;
 
+        public bool Visible;
+
         private const float StartSpeed = 3.0f;
 
         public float CurrentSpeed;
@@ -25,6 +27,12 @@ namespace karl_assign1_pong
         private const float SpinFactor = 0.01f;
 
         private int Delay;
+
+        private bool Strobe;
+
+        private int StrobeTimer;
+
+        private const int StrobePeriod = 700 * (int)StartSpeed;
 
         // Get the width of the ball
         public int Width
@@ -51,6 +59,8 @@ namespace karl_assign1_pong
             Delay = delay;
 
             Spin = 0;
+
+            Visible = true;
         }
 
         public void Reset(Vector2 position, Vector2 direction, int delay)
@@ -64,6 +74,8 @@ namespace karl_assign1_pong
             Delay = delay;
 
             Spin = 0;
+
+            Strobe = false;
         }
 
         public void Boost(Vector2 direction, float speed)
@@ -71,6 +83,13 @@ namespace karl_assign1_pong
             Direction = direction;
             CurrentSpeed += speed;
             CurrentSpeed = MathHelper.Clamp(CurrentSpeed, 0, MaxSpeed);
+        }
+
+        public void StrobeStart()
+        {
+            Strobe = true;
+            StrobeTimer = StrobePeriod / (int)CurrentSpeed;
+            Visible = false;
         }
 
         public void Update(GameTime gameTime, float maxHeight)
@@ -93,6 +112,15 @@ namespace karl_assign1_pong
                 {
                     Direction.Y = -Direction.Y * (float)Math.Pow(0.8f, timestep) ;
                     Spin = Spin / (2 * timestep);
+                }
+                if (Strobe)
+                {
+                    StrobeTimer -= gameTime.ElapsedGameTime.Milliseconds;
+                    if (StrobeTimer <= 0)
+                    {
+                        StrobeTimer += StrobePeriod / (int) CurrentSpeed;
+                        Visible = !Visible;
+                    }
                 }
             }
             else
@@ -121,12 +149,17 @@ namespace karl_assign1_pong
             }
             CurrentSpeed += 0.20f;
             CurrentSpeed = MathHelper.Clamp(CurrentSpeed, 0, MaxSpeed);
-            
+            Strobe = false;
+            Visible = true;
+
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(BallTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            if (Visible)
+            {
+                spriteBatch.Draw(BallTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            }
         }
     }
 }

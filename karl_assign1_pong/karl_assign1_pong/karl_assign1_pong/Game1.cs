@@ -36,6 +36,12 @@ namespace karl_assign1_pong
 
         Color[] menuColor = {Color.White, Color.White, Color.White, Color.White, Color.White};
 
+        SoundEffect paddleSound;
+        SoundEffect wallSound;
+        SoundEffect scoreSound;
+        SoundEffect speedPowerSound;
+        SoundEffect strobePowerSound;
+
         enum MenuState
         {
             SinglePlayer,
@@ -120,6 +126,10 @@ namespace karl_assign1_pong
             Vector2 ballPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
             Vector2 ballDirection = new Vector2(direction, (float)(Rand.NextDouble() * 1.5 - 1));
             ball.Reset(ballPosition, ballDirection, 500);
+
+            // Reset the powerups
+            speedPower.Reset();
+            strobePower.Reset();
         }
 
         /// <summary>
@@ -155,8 +165,7 @@ namespace karl_assign1_pong
             // load midline
             midLine = Content.Load<Texture2D>("midLine");
 
-            // load the powerUps
-            
+            // load the powerUps            
             Rectangle spawnArea = new Rectangle((int)paddlePosition1.X + paddle1.Width,
                 GraphicsDevice.Viewport.Y + (int)buffer,
                 GraphicsDevice.Viewport.Width - (int)buffer * 4 - paddle1.Width * 2 - Content.Load<Texture2D>("speed").Width,
@@ -166,6 +175,8 @@ namespace karl_assign1_pong
 
             Font1 = Content.Load<SpriteFont>("Font1");
             Font2 = Content.Load<SpriteFont>("Font2");
+
+            paddleSound = Content.Load<SoundEffect>("sound/paddle");
         }
 
         /// <summary>
@@ -376,11 +387,13 @@ namespace karl_assign1_pong
             if (ballBox.Intersects(paddle1Box))
             {
                 ball.Collide(true, currentGamePadState1.ThumbSticks.Left.Y);
+                paddleSound.Play();
             }
 
             if (ballBox.Intersects(paddle2Box))
             {
                 ball.Collide(false, currentGamePadState2.ThumbSticks.Left.Y);
+                paddleSound.Play();
             }
 
             if (ballBox.Intersects(speedBox))

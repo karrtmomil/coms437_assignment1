@@ -13,9 +13,9 @@ namespace karl_assign1_pong
 
         public int Timer;
 
-        private const int TimerMaxUp = 9 * 1000;
+        private const int TimerMaxUp = 8 * 1000;
 
-        private const int TimerDown = 2 * 1000;
+        private const int TimerDown = 3 * 1000;
 
         public Rectangle Spawn;
 
@@ -41,6 +41,12 @@ namespace karl_assign1_pong
             Active = false;
             Timer = TimerDown;
             Spawn = spawn;
+        }
+
+        public void Reset()
+        {
+            Active = false;
+            Timer = TimerDown;
         }
 
         public void Update(GameTime gameTime, Random rand)

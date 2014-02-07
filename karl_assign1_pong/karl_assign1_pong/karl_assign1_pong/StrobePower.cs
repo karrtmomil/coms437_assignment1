@@ -13,7 +13,9 @@ namespace karl_assign1_pong
 
         public int Timer;
 
-        private const int TimerMax = 2 * 1000;
+        private const int TimerMaxUp = 11 * 1000;
+
+        private const int TimerDown = 2 * 1000;
 
         public Rectangle Spawn;
 
@@ -35,8 +37,14 @@ namespace karl_assign1_pong
         {
             StrobeTexture = texture;
             Active = false;
-            Timer = TimerMax;
+            Timer = TimerDown;
             Spawn = spawn;
+        }
+
+        public void Reset()
+        {
+            Active = false;
+            Timer = TimerDown;
         }
 
         public void Update(GameTime gameTime, Random rand)
@@ -47,7 +55,7 @@ namespace karl_assign1_pong
                 if (Active)
                 {
                     Active = false;
-                    Timer += TimerMax;
+                    Timer += TimerDown;
                 }
                 else
                 {
@@ -67,13 +75,18 @@ namespace karl_assign1_pong
         private void Activate(Random rand)
         {
             Active = true;
-            Timer += TimerMax;
+            Timer += TimerMaxUp;
             Position = new Vector2((float)rand.NextDouble() * Spawn.Width + Spawn.Left, (float)rand.NextDouble() * Spawn.Height + Spawn.Top);
         }
 
         public void Collide(Ball ball)
         {
-
+            if (Active)
+            {
+                ball.StrobeStart();
+                Active = false;
+                Timer += TimerDown;
+            }
         }
     }
 }
