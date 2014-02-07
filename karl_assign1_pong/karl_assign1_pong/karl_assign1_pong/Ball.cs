@@ -12,11 +12,11 @@ namespace karl_assign1_pong
         // Postion
         public Vector2 Position;
 
-        public const float StartSpeed = 3.0f;
+        private const float StartSpeed = 3.0f;
 
         public float CurrentSpeed;
 
-        public const float MaxSpeed = 12.0f;
+        private const float MaxSpeed = 12.0f;
 
         public Vector2 Direction;
 

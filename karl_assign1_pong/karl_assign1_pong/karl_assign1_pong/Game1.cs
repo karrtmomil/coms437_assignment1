@@ -22,6 +22,9 @@ namespace karl_assign1_pong
         Paddle paddle1;
         Paddle paddle2;
         Ball ball;
+        Computer computer;
+        SpeedPower speedPower;
+        StrobePower strobePower;
 
         int score1 = 0;
         int score2 = 0;
@@ -29,6 +32,7 @@ namespace karl_assign1_pong
         Texture2D midLine;
         SpriteFont Font1;
         SpriteFont Font2;
+        Random Rand;
 
         Color[] menuColor = {Color.White, Color.White, Color.White, Color.White, Color.White};
 
@@ -95,6 +99,15 @@ namespace karl_assign1_pong
             // Initialize ball
             ball = new Ball();
 
+            // Initialize the computer
+            computer = new Computer();
+
+            // Initialize the powerUps
+            speedPower = new SpeedPower();
+            strobePower = new StrobePower();
+
+            Rand = new Random();
+
             base.Initialize();
         }
 
@@ -102,10 +115,10 @@ namespace karl_assign1_pong
         {
             score1 = 0;
             score2 = 0;
-            Random rand = new Random();
-            float direction = rand.Next(2) * 2 - 1;
+            
+            float direction = Rand.Next(2) * 2 - 1;
             Vector2 ballPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-            Vector2 ballDirection = new Vector2(direction, (float)(rand.NextDouble() * 1.5 - 1));
+            Vector2 ballDirection = new Vector2(direction, (float)(Rand.NextDouble() * 1.5 - 1));
             ball.Reset(ballPosition, ballDirection, 500);
         }
 
@@ -134,14 +147,22 @@ namespace karl_assign1_pong
             paddle2.Initialize(Content.Load<Texture2D>("paddle"), paddlePosition2);
 
             // Load the ball
-            Random rand = new Random();
-            float direction = rand.Next(2) * 2 - 1;
+            float direction = Rand.Next(2) * 2 - 1;
             Vector2 ballPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-            Vector2 ballDirection = new Vector2(direction, (float)(rand.NextDouble() * 1.5 - 1));
+            Vector2 ballDirection = new Vector2(direction, (float)(Rand.NextDouble() * 1.5 - 1));
             ball.Initialize(Content.Load<Texture2D>("ball"), ballPosition, ballDirection, 1000);
 
             // load midline
             midLine = Content.Load<Texture2D>("midLine");
+
+            // load the powerUps
+            
+            Rectangle spawnArea = new Rectangle((int)paddlePosition1.X + paddle1.Width,
+                GraphicsDevice.Viewport.Y + (int)buffer,
+                GraphicsDevice.Viewport.Width - (int)buffer * 4 - paddle1.Width * 2 - Content.Load<Texture2D>("speed").Width,
+                GraphicsDevice.Viewport.Height - (int)buffer * 2 - Content.Load<Texture2D>("speed").Height);
+            speedPower.Initialize(Content.Load<Texture2D>("speed3"), spawnArea);
+            strobePower.Initialize(Content.Load<Texture2D>("strobe2"), spawnArea);
 
             Font1 = Content.Load<SpriteFont>("Font1");
             Font2 = Content.Load<SpriteFont>("Font2");
@@ -171,6 +192,7 @@ namespace karl_assign1_pong
 
             switch (currentGamesState)
             {
+                #region MainMenu
 
                 case GameState.MainMenu:
                     // Allows the game to exit
@@ -244,32 +266,33 @@ namespace karl_assign1_pong
                     }
                 break;
 
+                #endregion
+
+                #region SinglePlayer
+
                 case GameState.SinglePlayer:
-                    currentGamePadState2 = GamePad.GetState(PlayerIndex.One);
-
-                    paddle1.Update(gameTime, currentGamePadState1.ThumbSticks.Left.Y);
-                    paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
-                    paddle2.Update(gameTime, currentGamePadState2.ThumbSticks.Left.Y);
+                    
+                    paddle2.Update(gameTime, computer.Move(ball, paddle2));
                     paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
 
-                    ball.Update(gameTime, GraphicsDevice.Viewport.Height);
-
-                    UpdateCollision();
-                    CheckForScore();
-               break;
-                
-               case GameState.Multiplayer:
-
-                    paddle1.Update(gameTime, currentGamePadState1.ThumbSticks.Left.Y);
-                    paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
-                    paddle2.Update(gameTime, currentGamePadState2.ThumbSticks.Left.Y);
-                    paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
-
-                    ball.Update(gameTime, GraphicsDevice.Viewport.Height);
-
-                    UpdateCollision();
-                    CheckForScore();
+                    UpdateGame(gameTime);
                 break;
+
+                #endregion
+
+                #region Multiplayer
+
+                case GameState.Multiplayer:
+                    
+                    paddle2.Update(gameTime, currentGamePadState2.ThumbSticks.Left.Y);
+                    paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
+
+                    UpdateGame(gameTime);                    
+                break;
+
+                #endregion
+
+                #region ScoreScreen
 
                 case GameState.ScoreSreen:
 
@@ -303,8 +326,9 @@ namespace karl_assign1_pong
                            {
                                this.Exit();
                            }
-                        break; 
-                   }
+                        break;
+                
+                    }
                    if (gameTime.ElapsedGameTime.Milliseconds > menuDelay)
                    {
                        endSelect = newEndSelect;
@@ -314,10 +338,25 @@ namespace karl_assign1_pong
                    {
                        menuDelay -= gameTime.ElapsedGameTime.Milliseconds;
                    }
-               break;
-            }
+                break;
+                #endregion
+            }            
 
             base.Update(gameTime);
+        }
+
+        private void UpdateGame(GameTime gameTime)
+        {
+            paddle1.Update(gameTime, currentGamePadState1.ThumbSticks.Left.Y);
+            paddle1.Position.Y = MathHelper.Clamp(paddle1.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle1.Height);
+
+            ball.Update(gameTime, GraphicsDevice.Viewport.Height);
+
+            speedPower.Update(gameTime, Rand);
+            strobePower.Update(gameTime, Rand);
+
+            UpdateCollision();
+            CheckForScore();
         }
 
         private Boolean UpdateCollision()
@@ -354,8 +393,7 @@ namespace karl_assign1_pong
 
             if (!ballBox.Intersects(screenBox))
             {
-                Random rand = new Random();
-                float direction = rand.Next(2) * 2 - 1;
+                float direction = Rand.Next(2) * 2 - 1;
                 Vector2 ballPosition = new Vector2(GraphicsDevice.Viewport.X + GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Y + GraphicsDevice.Viewport.Height / 2);
                 if (ball.Position.X < 0)
                 {
@@ -377,7 +415,7 @@ namespace karl_assign1_pong
                     }
                 }
 
-                Vector2 ballDirection = new Vector2(direction, (float)(rand.NextDouble() * 1.5 - 1));
+                Vector2 ballDirection = new Vector2(direction, (float)(Rand.NextDouble() * 1.5 - 1));
                 ball.Reset(ballPosition, ballDirection, 500);
                
             }
@@ -433,15 +471,6 @@ namespace karl_assign1_pong
 
         private void DrawGame()
         {
-            Vector2 origin1 = Font2.MeasureString(score1.ToString()) / 2;
-            Vector2 origin2 = Font2.MeasureString(score2.ToString()) / 2;
-
-            spriteBatch.DrawString(Font2, score1.ToString(), new Vector2(GraphicsDevice.Viewport.Width * 7 / 16, GraphicsDevice.Viewport.Height / 10), Color.White, 0f, origin1, 1f, SpriteEffects.None, 0.5f);
-            spriteBatch.DrawString(Font2, score2.ToString(), new Vector2(GraphicsDevice.Viewport.Width * 9 / 16, GraphicsDevice.Viewport.Height / 10), Color.White, 0f, origin1, 1f, SpriteEffects.None, 0.5f);
-
-            paddle1.Draw(spriteBatch);
-            paddle2.Draw(spriteBatch);
-            ball.Draw(spriteBatch);
 
             Vector2 midLinePos = new Vector2(0, -36);
 
@@ -451,6 +480,19 @@ namespace karl_assign1_pong
                 midLinePos = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - Content.Load<Texture2D>("midLine").Width / 2, midLinePos.Y + 48);
                 spriteBatch.Draw(midLine, midLinePos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             }
+
+            paddle1.Draw(spriteBatch);
+            paddle2.Draw(spriteBatch);
+            ball.Draw(spriteBatch);
+            speedPower.Draw(spriteBatch);
+            strobePower.Draw(spriteBatch);
+
+            Vector2 origin1 = Font2.MeasureString(score1.ToString()) / 2;
+            Vector2 origin2 = Font2.MeasureString(score2.ToString()) / 2;
+
+            spriteBatch.DrawString(Font2, score1.ToString(), new Vector2(GraphicsDevice.Viewport.Width * 7 / 16, GraphicsDevice.Viewport.Height / 10), Color.White, 0f, origin1, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.DrawString(Font2, score2.ToString(), new Vector2(GraphicsDevice.Viewport.Width * 9 / 16, GraphicsDevice.Viewport.Height / 10), Color.White, 0f, origin1, 1f, SpriteEffects.None, 0.5f);
+            
         }
     }
 }
