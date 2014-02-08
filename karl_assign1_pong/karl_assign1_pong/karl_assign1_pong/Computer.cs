@@ -4,6 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace karl_assign1_pong
 {
+    /// <summary>
+    /// Class to define how a computer should move
+    /// </summary>
     class Computer
     {
         // Max movespeed, on a range form 0 to 1.0f
