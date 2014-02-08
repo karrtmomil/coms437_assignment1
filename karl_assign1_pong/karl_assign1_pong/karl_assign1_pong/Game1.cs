@@ -40,6 +40,9 @@ namespace karl_assign1_pong
         SoundEffect wallSound;
         SoundEffect scoreSound;
 
+        /// <summary>
+        /// Different states for the menu (menu options)
+        /// </summary>
         enum MenuState
         {
             SinglePlayer,
@@ -49,6 +52,9 @@ namespace karl_assign1_pong
         
         MenuState menuSelect = MenuState.SinglePlayer;
 
+        /// <summary>
+        /// Options for the end screen menu
+        /// </summary>
         enum EndState
         {
             MainMenu,
@@ -59,6 +65,9 @@ namespace karl_assign1_pong
 
         int menuDelay = 0;
 
+        /// <summary>
+        /// enum for the different gamestates
+        /// </summary>
         enum GameState
         {
             MainMenu,
@@ -68,12 +77,6 @@ namespace karl_assign1_pong
         }
 
         GameState currentGamesState = GameState.MainMenu;
-        //GameState currentGamesState = GameState.SinglePlayer;
-        
-
-        // Keyboard states used to determine key presses
-        //KeyboardState currentKeyboardState;
-        //KeyboardState previousKeyboardState;
 
         // Gamepad states used to determine button presses
         GamePadState currentGamePadState1;
@@ -115,11 +118,15 @@ namespace karl_assign1_pong
             base.Initialize();
         }
 
+        /// <summary>
+        /// Function to reset the game to play again
+        /// </summary>
         private void resetGame()
         {
             score1 = 0;
             score2 = 0;
             
+            // Reset the ball
             float direction = Rand.Next(2) * 2 - 1;
             Vector2 ballPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
             Vector2 ballDirection = new Vector2(direction, (float)(Rand.NextDouble() * 1.5 - 1));
@@ -171,9 +178,11 @@ namespace karl_assign1_pong
             speedPower.Initialize(Content.Load<Texture2D>("speed3"), Content.Load<SoundEffect>("sound/powerSpeed"), spawnArea);
             strobePower.Initialize(Content.Load<Texture2D>("strobe2"), Content.Load<SoundEffect>("sound/power1"), spawnArea);
 
+            // load the fonts
             Font1 = Content.Load<SpriteFont>("Font1");
             Font2 = Content.Load<SpriteFont>("Font2");
 
+            //load sounds
             paddleSound = Content.Load<SoundEffect>("sound/paddle");
             wallSound = Content.Load<SoundEffect>("sound/wall");
             scoreSound = Content.Load<SoundEffect>("sound/score");
@@ -356,6 +365,10 @@ namespace karl_assign1_pong
             base.Update(gameTime);
         }
 
+        /// <summary>
+        /// function to update the parts of the game loop that are common for singleplayer and multiplayer
+        /// </summary>
+        /// <param name="gameTime"></param>
         private void UpdateGame(GameTime gameTime)
         {
             paddle1.Update(gameTime, currentGamePadState1.ThumbSticks.Left.Y);
@@ -370,6 +383,9 @@ namespace karl_assign1_pong
             strobePower.Update(gameTime, Rand);
         }
 
+        /// <summary>
+        /// check to see if the ball is colliding with anything else and handle the collision
+        /// </summary>
         private void UpdateCollision()
         {
             Rectangle ballBox;
@@ -407,6 +423,9 @@ namespace karl_assign1_pong
             }
         }
 
+        /// <summary>
+        /// check to see if someone scored by seeing if the ball has left the screen, update the score appropriately
+        /// </summary>
         private void CheckForScore()
         {
             Rectangle ballBox;
