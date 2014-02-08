@@ -12,7 +12,7 @@ namespace karl_assign1_pong
         /// <summary>
         /// This aglorithm determines where the computer player should move the paddle.
         /// It predicts the next position of the ball, but intentionally does not detect when the ball bounces
-        /// off of the walls of the level
+        /// off of the walls of the level, additionally it doesn't adequately detect large amounts of spin
         /// </summary>
         /// <param name="ball">The ball in the game</param>
         /// <param name="paddle">the paddle to be moved</param>
