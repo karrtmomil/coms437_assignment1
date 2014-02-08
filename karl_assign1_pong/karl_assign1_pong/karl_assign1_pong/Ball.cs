@@ -13,6 +13,7 @@ namespace karl_assign1_pong
         // Postion
         public Vector2 Position;
 
+        // whether or not the ball lis visible
         public bool Visible;
 
         private const float StartSpeed = 3.0f;
@@ -23,16 +24,22 @@ namespace karl_assign1_pong
 
         public Vector2 Direction;
 
+        // acceleration due to spin
         public float Spin;
 
+        // factor to determint the spin
         private const float SpinFactor = 0.01f;
 
+        // the delay between the ball being reset and starting to move
         private int Delay;
 
+        // whether or not the ball ist strobing
         private bool Strobe;
 
+        // timer for how long each 
         private int StrobeTimer;
 
+        // How long before the ball swaps visibility when 
         private const int StrobePeriod = 700 * (int)StartSpeed;
 
         // Get the width of the ball
@@ -64,6 +71,12 @@ namespace karl_assign1_pong
             Visible = true;
         }
 
+        /// <summary>
+        /// Function to reset the ball after someone scores
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="direction"></param>
+        /// <param name="delay"></param>
         public void Reset(Vector2 position, Vector2 direction, int delay)
         {
             Position = new Vector2(position.X - this.Width / 2, position.Y - this.Height / 2);
@@ -81,6 +94,11 @@ namespace karl_assign1_pong
             Visible = true;
         }
 
+        /// <summary>
+        /// Function to change direction and increase speed when collided with an active speed powerUp
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="speed"></param>
         public void Boost(Vector2 direction, float speed)
         {
             Direction = direction;
@@ -88,6 +106,9 @@ namespace karl_assign1_pong
             CurrentSpeed = MathHelper.Clamp(CurrentSpeed, 0, MaxSpeed);
         }
 
+        /// <summary>
+        /// start the the ball strobing
+        /// </summary>
         public void StrobeStart()
         {
             Strobe = true;
@@ -95,6 +116,12 @@ namespace karl_assign1_pong
             Visible = false;
         }
 
+        /// <summary>
+        /// move the ball, update the visiblility if strobing 
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="maxHeight"></param>
+        /// <param name="wallSound"></param>
         public void Update(GameTime gameTime, float maxHeight, SoundEffect wallSound)
         {
             if (Delay < 0)
@@ -134,6 +161,11 @@ namespace karl_assign1_pong
             }
         }
 
+        /// <summary>
+        /// handle the collision with paddles
+        /// </summary>
+        /// <param name="left">if the collided paddle is the left paddle</param>
+        /// <param name="spin">the amount of spin to add</param>
         public void Collide(Boolean left, float spin)
         {
             Spin = spin;
