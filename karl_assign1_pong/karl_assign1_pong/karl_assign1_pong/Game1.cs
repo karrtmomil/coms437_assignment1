@@ -402,13 +402,13 @@ namespace karl_assign1_pong
 
             if (ballBox.Intersects(paddle1Box))
             {
-                ball.Collide(true, currentGamePadState1.ThumbSticks.Left.Y);
+                ball.Collide(true, paddle1.InputSpeed);
                 paddleSound.Play();
             }
 
             if (ballBox.Intersects(paddle2Box))
             {
-                ball.Collide(false, currentGamePadState2.ThumbSticks.Left.Y);
+                ball.Collide(false, paddle2.InputSpeed);
                 paddleSound.Play();
             }
 

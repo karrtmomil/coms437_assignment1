@@ -14,7 +14,10 @@ namespace karl_assign1_pong
         public Vector2 Position;
 
         // constant Paddle move speed
-        public float paddleMoveSpeed = 10.0f;
+        public float PaddleMoveSpeed = 10.0f;
+
+        // input speed
+        public float InputSpeed;
 
         // Get the width of the paddle
         public int Width
@@ -37,8 +40,8 @@ namespace karl_assign1_pong
 
         public void Update(GameTime gameTime, float leftStickY)
         {
-            
-            this.Position.Y -= leftStickY * paddleMoveSpeed;
+            this.InputSpeed = leftStickY;
+            this.Position.Y -= leftStickY * PaddleMoveSpeed;
         }
 
         public void Draw(SpriteBatch spriteBatch)
