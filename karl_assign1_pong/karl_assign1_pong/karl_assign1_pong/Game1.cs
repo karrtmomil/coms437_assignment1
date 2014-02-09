@@ -11,6 +11,9 @@ using Microsoft.Xna.Framework.Media;
 
 namespace karl_assign1_pong
 {
+
+    #region Game Variables
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -84,12 +87,15 @@ namespace karl_assign1_pong
         GamePadState currentGamePadState2;
         GamePadState previousGamePadState2;
 
+    #endregion
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
+
+        #region Initialize and Reset
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -136,6 +142,10 @@ namespace karl_assign1_pong
             speedPower.Reset();
             strobePower.Reset();
         }
+
+        #endregion
+
+        #region Load
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -196,6 +206,10 @@ namespace karl_assign1_pong
         {
             // TODO: Unload any non ContentManager content here
         }
+
+        #endregion
+
+        #region Update
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -383,6 +397,10 @@ namespace karl_assign1_pong
             strobePower.Update(gameTime, Rand);
         }
 
+        #endregion
+
+        #region Collision and Score
+
         /// <summary>
         /// check to see if the ball is colliding with anything else and handle the collision
         /// </summary>
@@ -465,6 +483,10 @@ namespace karl_assign1_pong
             }
         }
 
+        #endregion
+
+        #region Draw
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -536,7 +558,9 @@ namespace karl_assign1_pong
 
             spriteBatch.DrawString(Font2, score1.ToString(), new Vector2(GraphicsDevice.Viewport.Width * 7 / 16, GraphicsDevice.Viewport.Height / 10), Color.White, 0f, origin1, 1f, SpriteEffects.None, 0.5f);
             spriteBatch.DrawString(Font2, score2.ToString(), new Vector2(GraphicsDevice.Viewport.Width * 9 / 16, GraphicsDevice.Viewport.Height / 10), Color.White, 0f, origin1, 1f, SpriteEffects.None, 0.5f);
-            
+
         }
+
+        #endregion
     }
 }
