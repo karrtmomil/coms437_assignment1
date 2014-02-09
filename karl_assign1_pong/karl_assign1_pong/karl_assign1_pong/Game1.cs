@@ -291,7 +291,7 @@ namespace karl_assign1_pong
                 #region SinglePlayer
 
                 case GameState.SinglePlayer:
-                    
+                    paddle2.PaddleMoveSpeed = 10f * computer.maxSpeed;
                     paddle2.Update(gameTime, computer.Move(ball, paddle2));
                     paddle2.Position.Y = MathHelper.Clamp(paddle2.Position.Y, 0, GraphicsDevice.Viewport.Height - paddle2.Height);
 

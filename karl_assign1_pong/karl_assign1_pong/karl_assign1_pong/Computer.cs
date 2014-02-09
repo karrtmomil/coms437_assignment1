@@ -12,6 +12,9 @@ namespace karl_assign1_pong
         // Max movespeed, on a range form 0 to 1.0f
         public float maxSpeed = 0.25f;
 
+        // Max spin on range form 0 to 1.0f
+        public float maxSpin = 0.8f;
+
         /// <summary>
         /// This aglorithm determines where the computer player should move the paddle.
         /// It predicts the next position of the ball, but intentionally does not detect when the ball bounces
@@ -24,13 +27,13 @@ namespace karl_assign1_pong
         {
             float ballY = ball.Position.Y + ball.Direction.Y * ball.CurrentSpeed;
 
-            if (ball.Position.Y < paddle.Position.Y)
+            if (ball.Position.Y + ball.Height / 2   < paddle.Position.Y + paddle.Height / 2 - ball.Height / 2)
             {
-                return maxSpeed;
+                return maxSpin;
             }
-            else if (ball.Position.Y + ball.Height > paddle.Position.Y + paddle.Height)
+            else if (ball.Position.Y + ball.Height / 2 > paddle.Position.Y + paddle.Height / 2 + ball.Height / 2)
             {
-                return - maxSpeed;
+                return - maxSpin;
             }
 
             return 0f;
