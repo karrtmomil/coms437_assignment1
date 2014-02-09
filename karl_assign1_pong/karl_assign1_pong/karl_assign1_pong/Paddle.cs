@@ -41,7 +41,7 @@ namespace karl_assign1_pong
         public void Update(GameTime gameTime, float leftStickY)
         {
             this.InputSpeed = leftStickY;
-            this.Position.Y -= leftStickY * PaddleMoveSpeed;
+            this.Position.Y -= leftStickY * PaddleMoveSpeed * gameTime.ElapsedGameTime.Milliseconds / 16;
         }
 
         public void Draw(SpriteBatch spriteBatch)
