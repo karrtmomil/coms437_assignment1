@@ -2,7 +2,6 @@ using System;
 
 namespace karl_assign1_pong
 {
-#if WINDOWS || XBOX
     static class Program
     {
         /// <summary>
@@ -16,6 +15,5 @@ namespace karl_assign1_pong
             }
         }
     }
-#endif
 }
 
